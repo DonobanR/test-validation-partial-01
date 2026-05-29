@@ -29,7 +29,9 @@ public class BaggageFeeCalculatorTest {
     @CsvSource({
         "1, 20, 30.00",
         "1, 25, 80.00"
-    })    public void equipajeEstandar(int maletas, int peso, double costoEsperado) {
+    })
+    
+    public void equipajeEstandar(int maletas, int peso, double costoEsperado) {
     	long pasajeString = 12312;
         when(passengerService.isVip(pasajeString)).thenReturn(false);
 
@@ -38,6 +40,16 @@ public class BaggageFeeCalculatorTest {
         assertEquals(costoEsperado, resultado);
     }
 
+    @Test
+    @DisplayName("Caso 3: Beneficio VIP - 1 maleta gratis")
+    void testBeneficioVIP() {
+        String pasajeroId = "VIP-777";
+        // Mockito simula que el servicio externo reconoce al pasajero como VIP
+        when(passengerService.isVip(pasajeroId)).thenReturn(true);
 
+        double resultado = bfCalculator.calculateFee(1, 15, pasajeroId);
+
+        assertEquals(0.00, resultado);
+    }
 
 }
