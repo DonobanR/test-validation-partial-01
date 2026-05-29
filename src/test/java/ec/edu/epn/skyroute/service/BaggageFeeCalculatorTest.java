@@ -5,7 +5,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 
 public class BaggageFeeCalculatorTest {
@@ -21,8 +24,12 @@ public class BaggageFeeCalculatorTest {
     	bfCalculator.calculateFee(passengerService);
     }
     
-    @Test
-    public void equipajeEstandar(int maletas, int peso, double costoEsperado) {
+    @ParameterizedTest
+    @DisplayName("Casos 1 y 2: Cálculo de costo para pasajero regular")
+    @CsvSource({
+        "1, 20, 30.00",
+        "1, 25, 80.00"
+    })    public void equipajeEstandar(int maletas, int peso, double costoEsperado) {
     	long pasajeString = 12312;
         when(passengerService.isVip(pasajeString)).thenReturn(false);
 
@@ -30,4 +37,7 @@ public class BaggageFeeCalculatorTest {
         
         assertEquals(costoEsperado, resultado);
     }
+
+
+
 }
