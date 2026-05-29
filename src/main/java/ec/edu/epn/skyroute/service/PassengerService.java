@@ -6,7 +6,10 @@ package ec.edu.epn.skyroute.service;
  * Esta interfaz representa una dependencia externa que debe ser
  * simulada (mock) durante las pruebas unitarias.
  */
+@Mock
 public interface PassengerService {
+    
+
 
     /**
      * Determina si un pasajero tiene estatus VIP activo.
