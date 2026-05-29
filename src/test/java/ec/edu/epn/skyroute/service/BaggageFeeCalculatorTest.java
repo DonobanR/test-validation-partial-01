@@ -1,6 +1,7 @@
 package ec.edu.epn.skyroute.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,7 +22,7 @@ public class BaggageFeeCalculatorTest {
     	
     	passengerService = mock(passengerService.class);
 
-    	bfCalculator.calculateFee(passengerService);
+    	bfCalculator = new BaggageFeeCalculator();
     }
     
     @ParameterizedTest
@@ -30,7 +31,7 @@ public class BaggageFeeCalculatorTest {
         "1, 20, 30.00",
         "1, 25, 80.00"
     })
-    
+
     public void equipajeEstandar(int maletas, int peso, double costoEsperado) {
     	long pasajeString = 12312;
         when(passengerService.isVip(pasajeString)).thenReturn(false);
@@ -52,4 +53,29 @@ public class BaggageFeeCalculatorTest {
         assertEquals(0.00, resultado);
     }
 
+    @Test
+    @DisplayName("Caso 4: Caso límite VIP - 1ra gratis, 2da cobro normal")
+    void testCasoLimiteVIP() {
+        String pasajeroId = "VIP-777";
+        when(passengerService.isVip(pasajeroId)).thenReturn(true);
+
+        // 2 maletas de 15 kg cada una
+        double resultado = bfCalculator.calculateFee(2, 15, pasajeroId);
+
+        assertEquals(30.00, resultado);
+    }
+
+    @ParameterizedTest
+    @DisplayName("Caso 5: Validación de excepción para peso cero o negativo")
+    @CsvSource({
+        "1,  0", // Peso cero
+        "1, -5"  // Peso negativo
+    })
+    void testValidacionDeExcepcion(int maletas, int peso) {
+        String pasajeroId = "REG-01";
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            bfCalculator.calculateFee(maletas, peso, pasajeroId);
+        });
+    }
 }
